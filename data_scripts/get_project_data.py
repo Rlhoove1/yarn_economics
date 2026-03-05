@@ -12,40 +12,61 @@ uid, pw = "read-0ea4f9f35434b031dbcf2acbe301c226", "tlSskeRXLNybZBFYzE2gZaAL7K2F
 # initialize dataframe and starting page
 frames = []
 n = 1
+
+n = 1
+frames = []
+retry_delay = 5
 start = time.time()
 
 while True:
     try:
-        response = requests.get(url, auth=(uid, pw),params={"page": n, "page_size": 500}, timeout=30 )       
-        
-        # reset if success
-        retry_delay = 5 
+        response = requests.get(
+            url,
+            auth=(uid, pw),
+            params={"page": n, "page_size": 500},
+            timeout=30
+        )
+
+        # check for empty or bad response
+        if response.status_code != 200 or not response.text.strip():
+            print(f"Warning: empty or bad response at page {n}, retrying in {retry_delay}s")
+            time.sleep(retry_delay)
+            retry_delay = min(retry_delay * 2, 300)
+            continue
+
+        # parse JSON safely
+        try:
+            responselist = response.json()
+        except json.JSONDecodeError:
+            print(f"Warning: JSON decode error at page {n}, retrying in {retry_delay}s")
+            time.sleep(retry_delay)
+            retry_delay = min(retry_delay * 2, 300)
+            continue
+
+        # stop if no projects returned
+        if len(responselist.get("projects", [])) == 0:
+            print(f"No projects returned at page {n}, stopping.")
+            break
+
+        tmp = pd.json_normalize(responselist["projects"])
+        if not tmp.empty:
+            frames.append(tmp)
+
+        # proof of life
+        if n % 5 == 0:
+            print(f"Page {n} collected, total rows: {sum(len(f) for f in frames)}")
+
+        n += 1
+        retry_delay = 5  # reset retry delay after success
+        time.sleep(0.5)  # polite delay
+
+        if n == 100:  # optional stop
+            break
 
     except requests.exceptions.RequestException as e:
-        print(f"Connection error: {e}")
-        print(f"Retrying in {retry_delay} seconds")
-
-        # increase wait time after a failure, capped at 5 mins
+        print(f"Connection error at page {n}: {e}, retrying in {retry_delay}s")
         time.sleep(retry_delay)
-        retry_delay = min(retry_delay * 2, 300) 
-
-    responselist = json.loads(response.text)
-
-    # stop if no projects returned
-    if len(responselist['projects']) == 0:
-        break
-
-    tmp = pd.json_normalize(responselist['projects'])
-
-    if not tmp.empty:
-        frames.append(tmp)
-    
-    # proof of life
-    if n % 5 == 0:
-        print(f"Page {n} collected")
-    if n == 100:
-        break
-    n += 1
+        retry_delay = min(retry_delay * 2, 300)
 
 end = time.time()
 print("runtime:", end - start)
