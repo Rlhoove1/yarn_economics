@@ -10,26 +10,24 @@ url = "https://api.ravelry.com/projects/search.json"
 uid, pw = "read-9add40de0449b103573f7fc8b71c002d", "AmETw80XYOTeWthpmGBbcmSqjCcVHwnq3dvvkVYi"
 
 # initialize dataframe and starting page
-response = requests.get(url, auth=(uid, pw),params={ "page": 1, "page_size": 500} )
-responselist = json.loads(response.text)
-#print(response.text)url = "https://api.ravelry.com/projects/search.json"
-df = pd.json_normalize(responselist["projects"])
-
-n = 2
+frames = []
+n = 1
 start = time.time()
 
 while True:
     try:
-        response = requests.get(
-            url,
-            auth=(uid, pw),
-            params={"page": n, "page_size": 500},
-            timeout=(3, 10)
-        )
+        response = requests.get(url, auth=(uid, pw),params={"page": n, "page_size": 500}, timeout=30 )       
+        
+        # reset if success
+        retry_delay = 5 
+
     except requests.exceptions.RequestException as e:
-        print("Connection error:", e)
-        time.sleep(30)
-        continue
+        print(f"Connection error: {e}")
+        print(f"Retrying in {retry_delay} seconds")
+
+        # increase wait time after a failure, capped at 5 mins
+        time.sleep(retry_delay)
+        retry_delay = min(retry_delay * 2, 300) 
 
     responselist = json.loads(response.text)
 
@@ -38,21 +36,20 @@ while True:
         break
 
     tmp = pd.json_normalize(responselist['projects'])
-   
-    if df.empty:
-        df = tmp
-    else:
-        df = pd.concat([df, tmp], ignore_index=True)
+
+    if not tmp.empty:
+        frames.append(tmp)
+    
     # proof of life
-    if n % 10 == 0:
-        print(f"Page {n} collected, rows so far: {len(df)}")
-    if n == 100:
+    if n % 5 == 0:
+        print(f"Page {n} collected")
+    if n == 20:
         break
     n += 1
 
 end = time.time()
 print("runtime:", end - start)
-
+df = pd.concat(frames, ignore_index=True)
 df.to_csv("project_data.csv", index=False)
 
 #work in progress for how exactly to get *all* the project data on raverly with out the site freaking out 
