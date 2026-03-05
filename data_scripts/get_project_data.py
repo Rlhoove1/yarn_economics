@@ -7,7 +7,7 @@ import time
 
 url = "https://api.ravelry.com/projects/search.json"
 # use ur acess key, define in console so it doenst end up on github 
-uid, pw = "read-9add40de0449b103573f7fc8b71c002d", "AmETw80XYOTeWthpmGBbcmSqjCcVHwnq3dvvkVYi"
+uid, pw = "read-0ea4f9f35434b031dbcf2acbe301c226", "tlSskeRXLNybZBFYzE2gZaAL7K2Fh/eXPnLuHly9"
 
 # initialize dataframe and starting page
 frames = []
@@ -43,7 +43,7 @@ while True:
     # proof of life
     if n % 5 == 0:
         print(f"Page {n} collected")
-    if n == 20:
+    if n == 100:
         break
     n += 1
 
