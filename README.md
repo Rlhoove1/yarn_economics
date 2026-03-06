@@ -9,6 +9,8 @@ TODO
 * its feasible to write the first section of the eda report (the part that doesnt require graphs)
 get_project_data.py is still a work in progress for how exactly to get *all* the project data on raverly with out the site freaking out 
 
+
+not a priorty but... 
 american time use data could be interesting to incorporate 
 https://www.bls.gov/tus/other-documentation/howto.htm 
 here is a recent paper using the data
