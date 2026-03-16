@@ -5,7 +5,7 @@ import time
 
 url = "https://api.ravelry.com/projects/search.json"
 # use ur acess key, define in console so it doenst end up on github 
-uid, pw = "read-9add40de0449b103573f7fc8b71c002d", "AmETw80XYOTeWthpmGBbcmSqjCcVHwnq3dvvkVYi"
+uid, pw = 
 
 # initialize dataframe and starting page
 frames = []
