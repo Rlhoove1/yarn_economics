@@ -1,21 +1,11 @@
 # yarn_economics
 Raverly data analysis
 
-# march 5 
+A flag like "_name" is added at the end of each code file to indicate who wrote it. 
 
-TODO 
-* get gdp data
-* get 32mil project entries :/
-* its feasible to write the first section of the eda report (the part that doesnt require graphs)
-get_project_data.py is still a work in progress for how exactly to get *all* the project data on raverly with out the site freaking out 
+All scripts related to data collection are contianed in data_scripts folder. They are labeled 1st-5th wich refelcts the order in wich they were created and not nesscarliy the order in wich they should be ran. The only reason that the code has been split 5 times is for convinece.
 
+Scripts for EDA and modeling are found in the data_analysis folder. 
 
-not a priorty but... 
-american time use data could be interesting to incorporate 
-https://www.bls.gov/tus/other-documentation/howto.htm 
-here is a recent paper using the data
-https://www.bls.gov/opub/ted/2026/baubles-bangles-and-beads-time-spent-on-hobbies.htm
-
-# march 15th 
-narrowed scope to 2.5 million croceht project entries scripts to do so and splicing stratgey are in folder
+Data used in this project is in the Data folder. Please note that due to github limitations only a small splice of the raverly data is available, contact rlhoove1@asu.edu for a dropbox link to the full dataset. 
 
